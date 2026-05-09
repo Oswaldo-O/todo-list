@@ -1,16 +1,17 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 function TodoForm({ onAddTodo }) {
+
+  const [ workingTodoTitle, setWorkingTodoTitle ] = useState("");
   const inputRef = useRef();
 
   const handleAddTodo = (event) => {
     event.preventDefault();
 
     // .trim prevents whitespace only todos
-    const todoTitle = inputRef.current.value.trim();
-    if (todoTitle) { // Asegúrate de que el todo no esté vacío
-      onAddTodo(todoTitle); // Llama a la función prop para añadir el nuevo todo
-      event.target.reset(); // Resetea el formulario
-      inputRef.current.focus(); // Enfoca nuevamente el campo de input
+    const todoTitle = workingTodoTitle.trim();
+    if (todoTitle) { 
+      onAddTodo(todoTitle); 
+      setWorkingTodoTitle("");
     }
   };
 
@@ -18,6 +19,10 @@ function TodoForm({ onAddTodo }) {
     <form onSubmit={handleAddTodo}>
       <label htmlFor="todoTitle">Todo</label>
       <input
+        value = {workingTodoTitle}
+        onChange={(event) =>{
+          setWorkingTodoTitle(event.target.value)
+        }}
         ref={inputRef}
         type="text"
         id="todoTitle"
@@ -25,7 +30,10 @@ function TodoForm({ onAddTodo }) {
         placeholder="Todo text"
         required
       />
-      <button type="submit">
+      <button 
+      type="submit"
+      disabled={!workingTodoTitle.trim()}
+      >
         Add Todo
       </button>
     </form>
