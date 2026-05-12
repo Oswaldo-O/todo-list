@@ -7,7 +7,7 @@ function TodoList({todoList, onCompleteTodo}) {
 
 
   return (
-    todoList.lenght=== 0 ? (
+    todoList.length=== 0 ? (
     <p>Add todo above to get started</p>
     ) : (
       <ul>
