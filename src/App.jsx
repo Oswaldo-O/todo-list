@@ -3,14 +3,19 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-import TodoList from './TodoList';
-import TodoForm from './TodoForm';
+import TodoList from './features/TodoList/TodoList';
+import TodoForm from './features/TodoForm'
+
 
 
 
 
 function App() {
   const[ todoList, setTodoList] =  useState([])
+
+
+
+
   
   function addTodo(todoTitle){
     const newTodo = {
@@ -19,7 +24,7 @@ function App() {
       isCompleted: false
     };
 
-  setTodoList(previous => [newTodo, ...previous])
+    setTodoList(previous => [newTodo, ...previous])
 
   }
 
@@ -33,6 +38,18 @@ function App() {
       setTodoList(updatedTodos)
     }
 
+    function updateTodo(editedTodo) {
+      const updatedTodos = todoList.map((todo) => {
+        if (todo.id === editedTodo.id) {
+          return { ...editedTodo };
+        }
+
+        return todo;
+      });
+      setTodoList(updatedTodos);
+    }
+
+
 
     return (
     <div>
@@ -41,6 +58,7 @@ function App() {
       <TodoList 
       todoList={todoList} 
       onCompleteTodo  = {completeTodo }
+      onUpdateTodo={updateTodo}
       />
     </div>
   )
