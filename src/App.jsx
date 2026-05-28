@@ -3,65 +3,36 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-import TodoList from './features/TodoList/TodoList';
-import TodoForm from './features/TodoForm'
-
-
+import TodosPage from './features/Todos/TodosPage'
+import Header from './shared/Header'
+import Logon from './features/Logon'
 
 
 
 function App() {
-  const[ todoList, setTodoList] =  useState([])
+  const[ email, setEmail] = useState("")
+  const[ token, setToken] = useState("")
 
+   return (
+    <>
+    <Header
+      token = {token}
+      onSetToken ={setToken}
+      onSetEmail = {setEmail}
+    />
 
-
-
-  
-  function addTodo(todoTitle){
-    const newTodo = {
-      id: Date.now(),
-      title: todoTitle,
-      isCompleted: false
-    };
-
-    setTodoList(previous => [newTodo, ...previous])
-
-  }
-
-    function completeTodo (id) {
-      const updatedTodos = todoList.map(todo =>{
-        if(todo.id ===id){
-          return {...todo, isCompleted:true}
-        }
-        return todo
-      })
-      setTodoList(updatedTodos)
-    }
-
-    function updateTodo(editedTodo) {
-      const updatedTodos = todoList.map((todo) => {
-        if (todo.id === editedTodo.id) {
-          return { ...editedTodo };
-        }
-
-        return todo;
-      });
-      setTodoList(updatedTodos);
-    }
-
-
-
-    return (
-    <div>
-      <h1>My Todos</h1>
-      <TodoForm onAddTodo={addTodo}/>
-      <TodoList 
-      todoList={todoList} 
-      onCompleteTodo  = {completeTodo }
-      onUpdateTodo={updateTodo}
-      />
-    </div>
-  )
+    { token ? (
+      <TodosPage token={token} />
+    ):(
+    <Logon 
+      onSetEmail={setEmail} 
+      onSetToken={setToken} 
+    />
+    )}
+    
+    </>
+   ) 
 }
 
 export default App
+
