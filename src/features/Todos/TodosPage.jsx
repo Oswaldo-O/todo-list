@@ -1,13 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import TodoList from './TodoList/TodoList';
 import TodoForm from './TodoForm'
+import SortBy from '../../shared/SortBy';
+import useDebounce from '../../utils/useDebounce';
+import FilterInput from '../../shared/FilterInput';
 
  function TodosPage({token}){
  const[error, setError] = useState("")
  const[isTodoListLoading, setIsTodoListLoading ] = useState(false)
-
  const[ todoList, setTodoList] =  useState([])
 
+ const[ sortBy, setSortBy ] = useState("creationDate")
+ const[ sortDirection, setSortDirection ] =useState("desc")
+
+ const [filterTerm, setFilterTerm] = useState('');
+ const debouncedFilterTerm = useDebounce(filterTerm, 300);
+
+ const handleFilterChange = (newTerm) => { setFilterTerm(newTerm); };
+
+ const [dataVersion, setDataVersion ] = useState(0);
+
+ 
+
+ const invalidateCache = useCallback(() => { 
+                                              console.log("Invalidating memo cache after todo mutation")
+                                              setDataVersion((prev) => prev + 1)
+                                             },[])
+
+ const[filterError, setFilterError ] = useState("")
 
 
 useEffect(() => {
@@ -17,8 +37,20 @@ useEffect(() => {
       setIsTodoListLoading(true);
       setError("");
 
+
+      const paramsObject = {
+        sortBy,
+        sortDirection,
+       };
+      if (debouncedFilterTerm) {
+        paramsObject.find = debouncedFilterTerm;
+      }
+      const params = new URLSearchParams(paramsObject);
+
+
+
       try {
-        const response = await fetch("/api/tasks", {
+        const response = await fetch(`/api/tasks?${params}`, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -38,15 +70,22 @@ useEffect(() => {
 
         // backend: { tasks: [], pagination: {} }
         setTodoList(data.tasks);
-      } catch (err) {
-        setError(err.message);
+
+        setFilterError("");
+
+      } catch (error) {
+        if (debouncedFilterTerm || sortBy !== 'creationDate' || sortDirection !== 'desc') {
+          setFilterError(`Error filtering/sorting todos: ${error.message}`);
+        } else {
+          setError(`Error fetching todos: ${error.message}`);
+        }
       } finally {
         setIsTodoListLoading(false);
       }
     }
 
     fetchTodos();
-  }, [token]);
+  }, [token, sortBy , sortDirection, debouncedFilterTerm  ]);
   
 
 
@@ -92,6 +131,8 @@ useEffect(() => {
       )
     );
 
+    invalidateCache();
+
   } catch (err) {
     // 5. rollback si falla
     setTodoList((prev) =>
@@ -135,7 +176,9 @@ useEffect(() => {
 
     if (!response.ok) {
       throw new Error("error completing todo");
-    }
+    } 
+
+    invalidateCache();
 
   } catch (err) {
     // 4. rollback
@@ -150,10 +193,6 @@ useEffect(() => {
     setError(err.message);
   }
 }
-
-    
-
-
 
 
     async function updateTodo(editedTodo) {
@@ -191,6 +230,8 @@ useEffect(() => {
       throw new Error("error updating todo");
     }
 
+    invalidateCache();
+
     // opcional: puedes sincronizar con backend
     // const updated = await response.json();
 
@@ -226,10 +267,48 @@ useEffect(() => {
       </div>
     )}
 
+   
+
+   {/* ERROR SPECIFIC */}
+  {filterError && (
+      <div>
+        <p>{filterError}</p>
+
+        <button onClick={() => setFilterError("")}>
+          Clear Filter Error
+        </button>
+
+        <button
+          onClick={() => {
+            setFilterTerm("");
+            setSortBy("creationDate");
+            setSortDirection("desc");
+            setFilterError("");
+          }}
+        >
+          Reset Filters
+        </button>
+      </div>
+  )}
+
+            
+
     {/* LOADING */}
     {isTodoListLoading && (
       <p>Loading todos...</p>
     )}
+
+    <SortBy
+      sortBy={sortBy}
+      sortDirection={sortDirection}
+      onSortByChange={setSortBy}
+      onSortDirectionChange={setSortDirection}
+    />
+
+    <FilterInput
+      filterTerm = {filterTerm}
+      onFilterChange = {handleFilterChange}
+    />
 
     <TodoForm onAddTodo={addTodo} />
 
@@ -237,6 +316,7 @@ useEffect(() => {
       todoList={todoList} 
       onCompleteTodo={completeTodo}
       onUpdateTodo={updateTodo}
+      dataVersion = {dataVersion }
     />
   </div>
 )
