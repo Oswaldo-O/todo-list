@@ -1,41 +1,65 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback,useReducer } from 'react';
 import TodoList from './TodoList/TodoList';
 import TodoForm from './TodoForm'
 import SortBy from '../../shared/SortBy';
 import useDebounce from '../../utils/useDebounce';
 import FilterInput from '../../shared/FilterInput';
 
+import {
+  todoReducer,
+  initialTodoState,
+  TODO_ACTIONS,
+} from '../../reducers/todoReducer';
+
+
+
  function TodosPage({token}){
- const[error, setError] = useState("")
- const[isTodoListLoading, setIsTodoListLoading ] = useState(false)
- const[ todoList, setTodoList] =  useState([])
+  const [state, dispatch] = useReducer(todoReducer, initialTodoState);
 
- const[ sortBy, setSortBy ] = useState("creationDate")
- const[ sortDirection, setSortDirection ] =useState("desc")
+  const {
+    todoList,
+    isTodoListLoading,
+    error,
+    filterError,
+    sortBy,
+    sortDirection,
+    filterTerm,
+    dataVersion,
+  } = state;
 
- const [filterTerm, setFilterTerm] = useState('');
+ //const[error, setError] = useState("")
+ //const[isTodoListLoading, setIsTodoListLoading ] = useState(false)
+ //const[ todoList, setTodoList] =  useState([])
+
+ //const[ sortBy, setSortBy ] = useState("creationDate")
+ //const[ sortDirection, setSortDirection ] =useState("desc")
+
+// const [filterTerm, setFilterTerm] = useState('');
  const debouncedFilterTerm = useDebounce(filterTerm, 300);
 
  const handleFilterChange = (newTerm) => { setFilterTerm(newTerm); };
 
- const [dataVersion, setDataVersion ] = useState(0);
+ //const [dataVersion, setDataVersion ] = useState(0);
 
  
+
 
  const invalidateCache = useCallback(() => { 
                                               console.log("Invalidating memo cache after todo mutation")
                                               setDataVersion((prev) => prev + 1)
                                              },[])
 
- const[filterError, setFilterError ] = useState("")
+// const[filterError, setFilterError ] = useState("")
 
 
 useEffect(() => {
     if (!token) return;
 
+
+
+
     async function fetchTodos() {
-      setIsTodoListLoading(true);
-      setError("");
+       dispatch({ type: TODO_ACTIONS.FETCH_START });
 
 
       const paramsObject = {
@@ -69,20 +93,18 @@ useEffect(() => {
         const data = await response.json();
 
         // backend: { tasks: [], pagination: {} }
-        setTodoList(data.tasks);
-
-        setFilterError("");
+        dispatch({
+          type: TODO_ACTIONS.FETCH_SUCCESS,
+          payload: data.tasks,
+        });
 
       } catch (error) {
-        if (debouncedFilterTerm || sortBy !== 'creationDate' || sortDirection !== 'desc') {
-          setFilterError(`Error filtering/sorting todos: ${error.message}`);
-        } else {
-          setError(`Error fetching todos: ${error.message}`);
-        }
-      } finally {
-        setIsTodoListLoading(false);
-      }
+       dispatch({
+        type: TODO_ACTIONS.FETCH_ERROR,
+        payload: err.message,
+      });
     }
+  }
 
     fetchTodos();
   }, [token, sortBy , sortDirection, debouncedFilterTerm  ]);
@@ -94,14 +116,10 @@ useEffect(() => {
   // 1. crear id temporal
   const tempId = Date.now();
 
-  const newTodo = {
-    id: tempId,
-    title: todoTitle,
-    isCompleted: false,
-  };
-
-  // 2. optimistic update (UI inmediata)
-  setTodoList((prev) => [newTodo, ...prev]);
+  dispatch({
+    type: TODO_ACTIONS.ADD_TODO_START,
+    payload: { tempId, title: todoTitle },
+  });
 
   try {
     // 3. llamada API
@@ -124,22 +142,17 @@ useEffect(() => {
 
     const savedTodo = await response.json();
 
-    // 4. reemplazar el temporal por el real
-    setTodoList((prev) =>
-      prev.map((todo) =>
-        todo.id === tempId ? savedTodo : todo
-      )
-    );
-
-    invalidateCache();
+    dispatch({
+      type: TODO_ACTIONS.ADD_TODO_SUCCESS,
+      payload: { tempId, savedTodo },
+    });
+    
 
   } catch (err) {
-    // 5. rollback si falla
-    setTodoList((prev) =>
-      prev.filter((todo) => todo.id !== tempId)
-    );
-
-    setError(err.message);
+    dispatch({
+      type: TODO_ACTIONS.ADD_TODO_ERROR,
+      payload: { tempId, error: err.message },
+    });
   }
 }
 
@@ -151,14 +164,11 @@ useEffect(() => {
     (todo) => todo.id === id
   );
 
-  // 2. optimistic update
-  setTodoList((prev) =>
-    prev.map((todo) =>
-      todo.id === id
-        ? { ...todo, isCompleted: true }
-        : todo
-    )
-  );
+    dispatch({
+    type: TODO_ACTIONS.COMPLETE_TODO_START,
+    payload: { id },
+  });
+
 
   try {
     // 3. request backend
@@ -178,22 +188,22 @@ useEffect(() => {
       throw new Error("error completing todo");
     } 
 
-    invalidateCache();
-
+    dispatch({
+      type: TODO_ACTIONS.COMPLETE_TODO_SUCCESS,
+      payload: { id },
+    });
+    
   } catch (err) {
-    // 4. rollback
-    setTodoList((prev) =>
-      prev.map((todo) =>
-        todo.id === id
-          ? originalTodo
-          : todo
-      )
-    );
-
-    setError(err.message);
+   dispatch({
+      type: TODO_ACTIONS.COMPLETE_TODO_ERROR,
+      payload: {
+        id,
+        originalTodo,
+        error: err.message,
+      },
+    });
   }
 }
-
 
     async function updateTodo(editedTodo) {
   // 1. guardar original (para rollback)
@@ -201,12 +211,10 @@ useEffect(() => {
     (todo) => todo.id === editedTodo.id
   );
 
-  // 2. optimistic update (UI inmediata)
-  setTodoList((prev) =>
-    prev.map((todo) =>
-      todo.id === editedTodo.id ? editedTodo : todo
-    )
-  );
+  dispatch({
+    type: TODO_ACTIONS.UPDATE_TODO_START,
+    payload: { editedTodo },
+  });
 
   try {
     // 3. request al backend
@@ -230,22 +238,25 @@ useEffect(() => {
       throw new Error("error updating todo");
     }
 
+    dispatch({
+      type: TODO_ACTIONS.UPDATE_TODO_SUCCESS,
+      payload: { updatedTodo },
+    });
+
+    
     invalidateCache();
 
     // opcional: puedes sincronizar con backend
     // const updated = await response.json();
 
   } catch (err) {
-    // 4. rollback si falla
-    setTodoList((prev) =>
-      prev.map((todo) =>
-        todo.id === editedTodo.id
-          ? originalTodo
-          : todo
-      )
-    );
-
-    setError(err.message);
+    dispatch({
+      type: TODO_ACTIONS.UPDATE_TODO_ERROR,
+      payload: {
+        originalTodo,
+        error: err.message,
+      },
+    });
   }
 }
 
@@ -261,7 +272,7 @@ useEffect(() => {
       <div>
         <p>{error}</p>
 
-        <button onClick={() => setError("")}>
+        <button onClick={() =>  dispatch({ type: TODO_ACTIONS.CLEAR_ERROR })}>
           Clear Error
         </button>
       </div>
@@ -274,17 +285,13 @@ useEffect(() => {
       <div>
         <p>{filterError}</p>
 
-        <button onClick={() => setFilterError("")}>
+        <button onClick={() => dispatch({ type: TODO_ACTIONS.CLEAR_FILTER_ERROR })}>
           Clear Filter Error
         </button>
 
         <button
-          onClick={() => {
-            setFilterTerm("");
-            setSortBy("creationDate");
-            setSortDirection("desc");
-            setFilterError("");
-          }}
+          onClick={() =>   dispatch({ type: TODO_ACTIONS.RESET_FILTERS })
+          }
         >
           Reset Filters
         </button>
@@ -301,10 +308,28 @@ useEffect(() => {
     <SortBy
       sortBy={sortBy}
       sortDirection={sortDirection}
-      onSortByChange={setSortBy}
-      onSortDirectionChange={setSortDirection}
+      onSortByChange={(newSortBy) =>
+            dispatch({
+              type: TODO_ACTIONS.SET_SORT,
+              payload: {
+                sortBy: newSortBy,
+                sortDirection,
+              },
+            })
+          }
+      onSortDirectionChange={(newDirection) =>
+            dispatch({
+              type: TODO_ACTIONS.SET_SORT,
+              payload: {
+                sortBy,
+                sortDirection: newDirection,
+              },
+            })
+          }
+
     />
 
+    
     <FilterInput
       filterTerm = {filterTerm}
       onFilterChange = {handleFilterChange}
