@@ -63,7 +63,6 @@ export const initialTodoState = {
 
 
 export function todoReducer(state, action) {
-    console.log('Dispatched action:', action.type, action.payload); // Remove this before committing
   switch (action.type) {
     // We'll add cases here
     case TODO_ACTIONS.FETCH_START:
@@ -253,6 +252,13 @@ export function todoReducer(state, action) {
             sortBy: 'creationDate',
             sortDirection: 'desc',
             filterError: '',
+        };
+
+
+    case TODO_ACTIONS.SET_DATA_VERSION:
+        return {
+            ...state,
+            dataVersion: state.dataVersion + 1,
         };
                 
 

@@ -4,6 +4,8 @@ import TodoForm from './TodoForm'
 import SortBy from '../../shared/SortBy';
 import useDebounce from '../../utils/useDebounce';
 import FilterInput from '../../shared/FilterInput';
+import { useAuth } from '../../contexts/AuthContext';
+
 
 import {
   todoReducer,
@@ -13,7 +15,9 @@ import {
 
 
 
- function TodosPage({token}){
+ function TodosPage(){
+  const { token } = useAuth();
+
   const [state, dispatch] = useReducer(todoReducer, initialTodoState);
 
   const {
@@ -37,7 +41,7 @@ import {
 // const [filterTerm, setFilterTerm] = useState('');
  const debouncedFilterTerm = useDebounce(filterTerm, 300);
 
- const handleFilterChange = (newTerm) => { setFilterTerm(newTerm); };
+ const handleFilterChange = (newTerm) => { setFilterTerm(newTerm); };  
 
  //const [dataVersion, setDataVersion ] = useState(0);
 
@@ -46,8 +50,8 @@ import {
 
  const invalidateCache = useCallback(() => { 
                                               console.log("Invalidating memo cache after todo mutation")
-                                              setDataVersion((prev) => prev + 1)
-                                             },[])
+                                              dispatch({ type: TODO_ACTIONS.SET_DATA_VERSION });
+                                             },[dispatch])
 
 // const[filterError, setFilterError ] = useState("")
 
@@ -98,10 +102,11 @@ useEffect(() => {
           payload: data.tasks,
         });
 
+
       } catch (error) {
        dispatch({
         type: TODO_ACTIONS.FETCH_ERROR,
-        payload: err.message,
+        payload: error.message,
       });
     }
   }
@@ -240,7 +245,7 @@ useEffect(() => {
 
     dispatch({
       type: TODO_ACTIONS.UPDATE_TODO_SUCCESS,
-      payload: { updatedTodo },
+      payload: { updatedTodo: editedTodo },
     });
 
     
