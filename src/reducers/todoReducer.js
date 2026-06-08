@@ -30,8 +30,9 @@ export const TODO_ACTIONS = {
   // =========================
   // UI OPERATIONS (NO API)
   // =========================
-  SET_SORT_BY: 'SET_SORT_BY',
-  SET_SORT_DIRECTION: 'SET_SORT_DIRECTION',
+  SET_SORT: 'SET_SORT',
+  //SET_SORT_BY: 'SET_SORT_BY',
+  //: 'SET_SORT_DIRECTION',
   SET_FILTER_TERM: 'SET_FILTER_TERM',
 
   CLEAR_ERROR: 'CLEAR_ERROR',
@@ -68,7 +69,7 @@ export function todoReducer(state, action) {
     case TODO_ACTIONS.FETCH_START:
     return {
         ...state,
-        isTodoListLoading: false,
+        isTodoListLoading: true,
         error: '',
         filterError: '',
     };
@@ -249,8 +250,8 @@ export function todoReducer(state, action) {
         return {
             ...state,
             filterTerm: '',
-            sortBy: 'creationDate',
-            sortDirection: 'desc',
+            sortBy: 'createdDate',
+            sortDirection: 'asc',
             filterError: '',
         };
 
@@ -260,13 +261,7 @@ export function todoReducer(state, action) {
             ...state,
             dataVersion: state.dataVersion + 1,
         };
-
-    case TODO_ACTIONS.SET_FILTER_TERM:
-        return {
-            ...state,
-            filterTerm: action.payload,
-        };
-                
+            
 
     default:
       throw new Error(`Unknown action type: ${action.type}`);
