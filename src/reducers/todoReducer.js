@@ -260,6 +260,12 @@ export function todoReducer(state, action) {
             ...state,
             dataVersion: state.dataVersion + 1,
         };
+
+    case TODO_ACTIONS.SET_FILTER_TERM:
+        return {
+            ...state,
+            filterTerm: action.payload,
+        };
                 
 
     default:

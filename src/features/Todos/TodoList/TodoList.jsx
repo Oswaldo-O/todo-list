@@ -5,7 +5,7 @@ function TodoList({todoList, onCompleteTodo, onUpdateTodo, dataVersion }) {
     
 
   const filteredTodoList = useMemo(() => {
-  console.log(`Recalculating filtered todos (v${dataVersion})`);
+  //console.log(`Recalculating filtered todos (v${dataVersion})`);
 
 
   return {
@@ -16,7 +16,7 @@ function TodoList({todoList, onCompleteTodo, onUpdateTodo, dataVersion }) {
 
 
   return (
-    filteredTodoList.length=== 0 ? (
+    filteredTodoList.todos.length=== 0 ? (
     <p>Add todo above to get started</p>
     ) : (
       <ul>

@@ -31,29 +31,22 @@ import {
     dataVersion,
   } = state;
 
- //const[error, setError] = useState("")
- //const[isTodoListLoading, setIsTodoListLoading ] = useState(false)
- //const[ todoList, setTodoList] =  useState([])
-
- //const[ sortBy, setSortBy ] = useState("creationDate")
- //const[ sortDirection, setSortDirection ] =useState("desc")
-
-// const [filterTerm, setFilterTerm] = useState('');
  const debouncedFilterTerm = useDebounce(filterTerm, 300);
 
- const handleFilterChange = (newTerm) => { setFilterTerm(newTerm); };  
+ const handleFilterChange = (newTerm) => { 
+                                            dispatch({
+                                              type: TODO_ACTIONS.SET_FILTER_TERM,
+                                              payload: newTerm,
+                                            });
+                                          };
 
- //const [dataVersion, setDataVersion ] = useState(0);
-
- 
-
-
+                                          
  const invalidateCache = useCallback(() => { 
-                                              console.log("Invalidating memo cache after todo mutation")
+                                            //  console.log("Invalidating memo cache after todo mutation")
                                               dispatch({ type: TODO_ACTIONS.SET_DATA_VERSION });
                                              },[dispatch])
 
-// const[filterError, setFilterError ] = useState("")
+
 
 
 useEffect(() => {
