@@ -134,12 +134,13 @@ export function todoReducer(state, action) {
             ...state,
             todoList: state.todoList.map((todo) =>
             todo.id === action.payload.id
-                ? { ...todo, isCompleted: true }
+                ? { ...todo, isCompleted: !todo.isCompleted }
                 : todo
             ),
             error: '',
         };
         }
+
 
     case TODO_ACTIONS.COMPLETE_TODO_SUCCESS: {
         return {

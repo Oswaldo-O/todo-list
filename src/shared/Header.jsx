@@ -1,3 +1,4 @@
+import Navigation from './Navigation'
 import { useAuth } from '../contexts/AuthContext'
 
 function Header() {
@@ -7,6 +8,7 @@ function Header() {
     <>
       <h1>Todo List</h1>
 
+      <Navigation />
       {isAuthenticated && (
         <p>Logged In</p>
       )}
