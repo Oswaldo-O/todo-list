@@ -31,8 +31,7 @@ export const TODO_ACTIONS = {
   // UI OPERATIONS (NO API)
   // =========================
   SET_SORT: 'SET_SORT',
-  //SET_SORT_BY: 'SET_SORT_BY',
-  //: 'SET_SORT_DIRECTION',
+
   SET_FILTER_TERM: 'SET_FILTER_TERM',
 
   CLEAR_ERROR: 'CLEAR_ERROR',
@@ -251,8 +250,8 @@ export function todoReducer(state, action) {
         return {
             ...state,
             filterTerm: '',
-            sortBy: 'createdDate',
-            sortDirection: 'asc',
+            sortBy: initialTodoState.sortBy,
+            sortDirection: initialTodoState.sortDirection,
             filterError: '',
         };
 

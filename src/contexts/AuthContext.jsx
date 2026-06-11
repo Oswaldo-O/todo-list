@@ -55,13 +55,59 @@ export function AuthProvider({ children }) {
   
 
 
-    const logout = () => {
-        setEmail('');
-        setToken('');
-    };
+// =========================
+  // LOGOUT (UPDATED)
+  // =========================
+  const logout = async () => {
+    const csrfToken = token;
 
-  
-  // Context value object
+    // 1. If no token, just clear state
+    if (!token) {
+      setEmail('');
+      setToken('');
+
+      return {
+        success: true,
+        message: 'Already logged out',
+      };
+    }
+
+    try {
+      // 2. Call logout API
+      const res = await fetch('/api/users/logoff', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        throw new Error('Logout request failed');
+      }
+
+      return {
+        success: true,
+        message: 'Logged out successfully',
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Logout failed',
+      };
+
+    } finally {
+      // 3. ALWAYS clear auth state
+      setEmail('');
+      setToken('');
+    }
+  };
+
+  // =========================
+  // CONTEXT VALUE
+  // =========================
   const value = {
     email,
     token,
@@ -69,6 +115,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
   };
+
   
   return (
     <AuthContext.Provider value={value}>
