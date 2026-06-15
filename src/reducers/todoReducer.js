@@ -54,7 +54,7 @@ export const initialTodoState = {
   error: '',
   filterError: '',
   isTodoListLoading: false,
-  sortBy: 'createdDate',
+  sortBy: 'createdAt',
   sortDirection: 'asc',
   filterTerm: '',
   dataVersion: 0,

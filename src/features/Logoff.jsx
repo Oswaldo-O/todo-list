@@ -6,6 +6,10 @@ function Logoff() {
   const { logout } = useAuth();
   const navigate = useNavigate();  // Add this hook
 
+  const [isLoggingOff, setIsLoggingOff] = useState(false);
+  const [error, setError] = useState('');
+
+
   async function handleLogoff() {
     setIsLoggingOff(true);
     setError('');
@@ -21,10 +25,15 @@ function Logoff() {
   }
 
   return (
-    <button onClick={handleLogout}>
-      Log Off
+    <>
+    <button onClick={handleLogoff}  disabled={isLoggingOff}>
+      {isLoggingOff ? 'Logging off...' : 'Log Off'}
     </button>
+
+    {error && <p>{error}</p>}
+    </>
   );
 }
 
 export default Logoff;
+

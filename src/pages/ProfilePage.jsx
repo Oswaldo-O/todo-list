@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 function ProfilePage() {
-  const { user, token } = useAuth();
+  const { email, token } = useAuth();
 
   const [stats, setStats] = useState({
     total: 0,
@@ -10,7 +10,7 @@ function ProfilePage() {
     active: 0,
   });
 
-  const [Loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
  useEffect(() => {
@@ -37,14 +37,15 @@ function ProfilePage() {
         throw new Error('Failed to fetch todos');
       }
 
-      const todos = await response.json();
+      const data = await response.json();
+      const todos = data.tasks;
 
       // Calculate statistics
       const total = todos.length;
       const completed = todos.filter((todo) => todo.isCompleted).length;
       const active = total - completed;
 
-      setTodoStats({ total, completed, active });
+      setStats({ total, completed, active });
     } catch (err) {
       setError(`Error loading statistics: ${err.message}`);
     } finally {
@@ -64,7 +65,7 @@ function ProfilePage() {
         <h2>User Information</h2>
 
         <p>
-          <strong>Name:</strong> {user?.name || 'Unknown User'}
+          <strong>Name:</strong> {email ?.name || 'Unknown User'}
         </p>
 
         <p>
@@ -75,11 +76,11 @@ function ProfilePage() {
       <section>
         <h2>Todo Statistics</h2>
 
-        {Loading && <p>Loading statistics...</p>}
+        {loading && <p>Loading statistics...</p>}
 
         {error && <p>{error}</p>}
 
-        {!Loading && !error && (
+        {!loading && !error && (
           <ul>
             <li>Total Todos: {stats.total}</li>
             <li>Completed Todos: {stats.completed}</li>
