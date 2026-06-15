@@ -1,0 +1,45 @@
+.form {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-end;
+
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  padding: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+/* INPUT WRAPPER (si TextInputWithLabel no lo controla, ayuda al layout) */
+.inputWrapper {
+  flex: 1;
+}
+
+/* BUTTON */
+.button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background-color: var(--color-primary);
+  color: white;
+
+  font-size: var(--text-sm);
+  cursor: pointer;
+
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

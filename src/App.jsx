@@ -17,14 +17,15 @@ import NotFoundPage from './pages/NotFoundPage';
 import RequireAuth from './components/RequireAuth';
 import Header from './shared/Header';
 
-
+import styles from './App.module.css';
 
 // Page imports will go here
 
 function App() {
   return (
-    <>
+    <div className={styles.appContainer}>
       <Header />
+      <main className={styles.main}>
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/about' element={<AboutPage />} />
@@ -47,7 +48,8 @@ function App() {
         />
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
-    </>
+      </main>
+    </div>
   );
 }
 

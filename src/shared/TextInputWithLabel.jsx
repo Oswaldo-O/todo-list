@@ -1,3 +1,4 @@
+ import styles from "./TextInputWithLabel.module.css";
  function TextInputWithLabel({
   elementId,
   labelText,
@@ -6,17 +7,24 @@
   value,
 }) {
   return (
-    <>
-      <label htmlFor={elementId}>{labelText}</label>
+    <div className={styles.container}>
+      <label
+       className={styles.label}
+       htmlFor={elementId}
+       >
+         {labelText}
+       </label>
       <input
+        className={styles.input}
         type="text"
         id={elementId}
         ref={ref}
         value={value}
         onChange={onChange}
       />
-    </>
+    </div>
   );
 }
 
 export default TextInputWithLabel;
+

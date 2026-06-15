@@ -1,7 +1,7 @@
 import { useState,useRef } from "react";
 import TextInputWithLabel from "../../../shared/TextInputWithLabel";
 import { isValidTodoTitle } from "../../../utils/todoValidation";
-
+import styles from "./TodoListItem.module.css";
 
 function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -36,8 +36,10 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
 
 
   return (
-  <li>
-    <form  onSubmit={handleUpdate}>
+  <li className={`${styles.item} ${todo.isCompleted ? styles.itemCompleted : ""}`}>
+    <form  onSubmit={handleUpdate}
+           className={styles.form}
+           >
         {isEditing ? (
           <>
             <TextInputWithLabel 
@@ -49,12 +51,16 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
             />
 
 
-            <button type="button" onClick={handleCancel}>
+            <button type="button"
+             className={`${styles.button} ${styles.cancelButton}`}
+             onClick={handleCancel}
+            >
             Cancel
            </button>
 
            <button
               type="button"
+              className={styles.button}
               onClick={handleUpdate}
               disabled={!isValidTodoTitle(workingTitle)}
             >
@@ -64,17 +70,30 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
 
            </> 
         ) : (
-            <>
-                <label>
+            
+                <div className={styles.todoRow}>
                     <input
+                        className={styles.checkbox}
                         type="checkbox"
                         id={`checkbox${todo.id}`}
                         checked={todo.isCompleted}
                         onChange={() => onCompleteTodo(todo.id)}
                     />
-                </label>
-                <span onClick={() => setIsEditing(true)}>{todo.title}</span>
-            </>
+                
+                <span className={
+                          todo.isCompleted
+                                ? `${styles.title} ${styles.completed}`
+                                : styles.title
+                            }
+
+                          onClick={() => setIsEditing(true)}
+                >
+                          
+                {todo.title}
+
+                </span>
+                </div>
+            
         )}
     </form>
 </li>
@@ -83,7 +102,5 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
 }
 
 export default TodoListItem;
-
-
 
 
