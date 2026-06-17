@@ -96,3 +96,14 @@
 .cancelButton {
   background-color: var(--color-danger);
 }
+
+
+
+
+.item {
+  width: 100%;
+}
+
+.title {
+  word-break: break-word;
+}

@@ -37,8 +37,8 @@ function TodoForm({ onAddTodo }) {
 
 
       <button 
-       className={styles.button}
-       disabled={!isValidTodoTitle(workingTodoTitle)}
+        className={styles.button}
+        disabled={!isValidTodoTitle(workingTodoTitle)}
       >
         Add Todo
       </button>

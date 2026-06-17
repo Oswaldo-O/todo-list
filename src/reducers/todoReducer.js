@@ -54,7 +54,7 @@ export const initialTodoState = {
   error: '',
   filterError: '',
   isTodoListLoading: false,
-  sortBy: 'createdDate',
+  sortBy: 'createdAt',
   sortDirection: 'asc',
   filterTerm: '',
   dataVersion: 0,
@@ -200,21 +200,7 @@ export function todoReducer(state, action) {
         };
         }
 
-/*
-    case TODO_ACTIONS.SET_SORT_BY:
-        return {
-            ...state,
-            sortBy: action.payload,
-        };
 
-
-    case TODO_ACTIONS.SET_SORT_DIRECTION:
-        return {
-            ...state,
-            sortDirection: action.payload,
-        };
-
-*/
     case TODO_ACTIONS.SET_SORT:
         return {
             ...state,

@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px; /* evita layouts demasiado pequeños */
+  overflow-x: hidden; /* evita scroll horizontal */
+}

@@ -46,3 +46,10 @@
 .input::placeholder {
   color: var(--color-text-muted);
 }
+
+
+
+.input {
+  font-size: 36px;
+  min-height: 44px;
+}

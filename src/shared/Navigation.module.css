@@ -43,3 +43,17 @@
   background-color: var(--color-primary);
   color: white;
 }
+
+
+@media (max-width: 600px) {
+  .list {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .link {
+    width: 100%;
+    text-align: center;
+  }
+}
