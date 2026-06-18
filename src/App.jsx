@@ -1,67 +1,56 @@
-import { useState } from 'react'
+//import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-import TodoList from './features/TodoList/TodoList';
-import TodoForm from './features/TodoForm'
+import Logon from './features/Logon'
+//import { useAuth } from './contexts/AuthContext'
+import { Routes, Route } from 'react-router';
 
 
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import LoginPage from './pages/LoginPage';
+import TodosPage from './pages/TodosPage';
+import ProfilePage from './pages/ProfilePage';
+import NotFoundPage from './pages/NotFoundPage';
+import RequireAuth from './components/RequireAuth';
+import Header from './shared/Header';
 
+import styles from './App.module.css';
 
+// Page imports will go here
 
 function App() {
-  const[ todoList, setTodoList] =  useState([])
-
-
-
-
-  
-  function addTodo(todoTitle){
-    const newTodo = {
-      id: Date.now(),
-      title: todoTitle,
-      isCompleted: false
-    };
-
-    setTodoList(previous => [newTodo, ...previous])
-
-  }
-
-    function completeTodo (id) {
-      const updatedTodos = todoList.map(todo =>{
-        if(todo.id ===id){
-          return {...todo, isCompleted:true}
-        }
-        return todo
-      })
-      setTodoList(updatedTodos)
-    }
-
-    function updateTodo(editedTodo) {
-      const updatedTodos = todoList.map((todo) => {
-        if (todo.id === editedTodo.id) {
-          return { ...editedTodo };
-        }
-
-        return todo;
-      });
-      setTodoList(updatedTodos);
-    }
-
-
-
-    return (
-    <div>
-      <h1>My Todos</h1>
-      <TodoForm onAddTodo={addTodo}/>
-      <TodoList 
-      todoList={todoList} 
-      onCompleteTodo  = {completeTodo }
-      onUpdateTodo={updateTodo}
-      />
+  return (
+    <div className={styles.appContainer}>
+      <Header />
+      <main className={styles.main}>
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route
+          path='/todos'
+          element={
+            <RequireAuth>
+              <TodosPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <RequireAuth>
+              <ProfilePage />
+            </RequireAuth>
+          }
+        />
+        <Route path='*' element={<NotFoundPage />} />
+      </Routes>
+      </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

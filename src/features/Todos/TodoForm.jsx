@@ -1,6 +1,7 @@
 import {  useState, useRef  } from 'react';
-import TextInputWithLabel from '../shared/TextInputWithLabel';
-import { isValidTodoTitle } from '../utils/todoValidation';
+import TextInputWithLabel from '../../shared/TextInputWithLabel';
+import { isValidTodoTitle } from '../../utils/todoValidation';
+import styles from './TodoForm.module.css';
 
 
 function TodoForm({ onAddTodo }) {
@@ -21,7 +22,8 @@ function TodoForm({ onAddTodo }) {
   };
 
   return (
-    <form onSubmit={handleAddTodo}>
+    <form className={styles.form} onSubmit={handleAddTodo}>
+      <div className={styles.inputWrapper}>
       <TextInputWithLabel
         elementId="todoTitle"
         labelText="Todo"
@@ -34,7 +36,13 @@ function TodoForm({ onAddTodo }) {
       />
 
 
-      <button disabled={!isValidTodoTitle(workingTodoTitle)}>Add Todo</button>
+      <button 
+        className={styles.button}
+        disabled={!isValidTodoTitle(workingTodoTitle)}
+      >
+        Add Todo
+      </button>
+      </div>
     </form>
   );
 }

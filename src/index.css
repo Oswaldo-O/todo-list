@@ -1,0 +1,60 @@
+/* =========================
+   DESIGN SYSTEM (GLOBAL)
+   ========================= */
+
+:root {
+  /* 🌈 COLORS */
+  --color-bg: #bec5d6;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #111827;
+
+  --color-text: #111827;
+  --color-text-muted: #9CA3AF;
+
+  --color-primary: #3b82f6;
+  --color-secondary: #22c55e;
+  --color-danger: #ef4444;
+
+  --color-border: #243244;
+
+  /* 📏 SPACING */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  /* 🧠 RADIUS */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  /* ✍️ TYPOGRAPHY */
+  --font-base: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+}
+
+/* RESET */
+* {     
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-base);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
