@@ -13,7 +13,11 @@ This application helps users manage their tasks efficiently through a simple and
 ![Profile showing ](./screenshots/Profile.png)
 
 ## 📸 Presentation
-https://drive.google.com/file/d/1st_FIzhjuAZX4_l7y940YlcaMudJa5VD/view?usp=sharing
+https://drive.google.com/file/d/1CdCf6YyZf4UDAFn7t9t_s5SL2cVyCIHe/view?usp=sharing
+
+## 📸 Deployment
+https://todo-list-ctdreact.vercel.app
+
 
 ## 🛠️ Technologies Used
     React - Component-based UI development
