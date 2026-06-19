@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
         credentials: 'include',
         };
         
-        const res = await fetch('${API_URL}/api/users/logon', options); //////////////////////////
+        const res = await fetch(`${API_URL}/api/users/logon`, options); //////////////////////////
         const data = await res.json();
         
         if (res.status === 200 && data.name && data.csrfToken) {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }) {
 
     try {
       // 2. Call logout API
-      const res = await fetch('${API_URL}/api/users/logoff', {
+      const res = await fetch(`${API_URL}/api/users/logoff`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
