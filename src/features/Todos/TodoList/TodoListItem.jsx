@@ -1,13 +1,24 @@
-import { useState,useRef } from "react";
+import { useState,useRef,useEffect } from "react";
 import TextInputWithLabel from "../../../shared/TextInputWithLabel";
 import { isValidTodoTitle } from "../../../utils/todoValidation";
 import styles from "./TodoListItem.module.css";
 
-function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
+
+function TodoListItem({todo, onCompleteTodo,onUpdateTodo,onDeleteTodo,   }) {
   const [isEditing, setIsEditing] = useState(false)
   const [ workingTitle, setWorkingTitle ] = useState(todo.title)
   const todoInputRef = useRef(null);
   
+
+    // 👉 AQUÍ VA EL useEffect
+  useEffect(() => {
+    if (isEditing) {
+      todoInputRef.current?.focus();
+    }
+  }, [isEditing]);
+
+
+
   const handleCancel = () => {
   setWorkingTitle(todo.title);
   setIsEditing(false);
@@ -33,6 +44,9 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
     setIsEditing(false);
   };
 
+  const handleDelete = () => {
+  onDeleteTodo(todo.id);
+  };
 
 
   return (
@@ -50,23 +64,23 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
              value={workingTitle}
             />
 
-
-            <button type="button"
-             className={`${styles.button} ${styles.cancelButton}`}
-             onClick={handleCancel}
-            >
-            Cancel
-           </button>
-
-           <button
-              type="button"
-              className={styles.button}
-              onClick={handleUpdate}
-              disabled={!isValidTodoTitle(workingTitle)}
-            >
-              Update
+            <div className={styles.buttonGroup}>
+              <button type="button"
+              className={`${styles.button} ${styles.cancelButton}`}
+              onClick={handleCancel}
+              >
+              Cancel
             </button>
-            
+
+            <button
+                type="submit"
+                className={styles.button}
+
+                disabled={!isValidTodoTitle(workingTitle)}
+              >
+                Update
+              </button>
+            </div>
 
            </> 
         ) : (
@@ -77,21 +91,29 @@ function TodoListItem({todo, onCompleteTodo,onUpdateTodo }) {
                         type="checkbox"
                         id={`checkbox${todo.id}`}
                         checked={todo.isCompleted}
-                        onChange={() => onCompleteTodo(todo.id)}
+                        onChange={() => onCompleteTodo(todo.id, todo.isCompleted)}
                     />
                 
-                <span className={
-                          todo.isCompleted
-                                ? `${styles.title} ${styles.completed}`
-                                : styles.title
-                            }
+                    <span className={
+                              todo.isCompleted
+                                    ? `${styles.title} ${styles.completed}`
+                                    : styles.title
+                                }
 
-                          onClick={() => setIsEditing(true)}
-                >
-                          
-                {todo.title}
+                              onClick={() => setIsEditing(true)}
+                    >
+                              
+                    {todo.title}
 
-                </span>
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      className={styles.deleteButton}
+                    >
+                      Delete
+                    </button>
                 </div>
             
         )}

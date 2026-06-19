@@ -6,6 +6,7 @@ function TodoList({
   todoList,
   onCompleteTodo,
   onUpdateTodo,
+  onDeleteTodo,
   dataVersion,
   statusFilter = 'active',  // Add this prop with default
 }) {
@@ -55,6 +56,7 @@ function TodoList({
           todo={todo}
           onCompleteTodo={onCompleteTodo}
           onUpdateTodo={onUpdateTodo}
+          onDeleteTodo={onDeleteTodo} 
         />
       ))}
     </ul>

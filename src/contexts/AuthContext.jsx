@@ -19,7 +19,8 @@ export function AuthProvider({ children }) {
   // State for authentication
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
-  
+
+    
   // Functions will go here...
     const login = async (userEmail, password) => {
     try {
@@ -30,7 +31,7 @@ export function AuthProvider({ children }) {
         credentials: 'include',
         };
         
-        const res = await fetch('/api/users/logon', options);
+        const res = await fetch('/api/users/logon', options); 
         const data = await res.json();
         
         if (res.status === 200 && data.name && data.csrfToken) {
