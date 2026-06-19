@@ -28,6 +28,13 @@ export const TODO_ACTIONS = {
   UPDATE_TODO_ERROR: 'UPDATE_TODO_ERROR',
 
   // =========================
+  // DELETE TODO OPERATIONS
+  // =========================
+  DELETE_TODO_START: "DELETE_TODO_START",
+  DELETE_TODO_SUCCESS: "DELETE_TODO_SUCCESS",
+  DELETE_TODO_ERROR: "DELETE_TODO_ERROR",
+
+  // =========================
   // UI OPERATIONS (NO API)
   // =========================
   SET_SORT: 'SET_SORT',
@@ -140,12 +147,30 @@ export function todoReducer(state, action) {
         };
         }
 
+/*
+case TODO_ACTIONS.COMPLETE_TODO_SUCCESS: {
+  return {
+    ...state,
+    todoList: state.todoList.map((todo) =>
+      todo.id === action.payload.id
+        ? { ...todo, isCompleted: !todo.isCompleted }
+        : todo
+    ),
+  };
+}
+*/
 
-    case TODO_ACTIONS.COMPLETE_TODO_SUCCESS: {
-        return {
-            ...state,
-        };
-        }
+case TODO_ACTIONS.COMPLETE_TODO_SUCCESS:
+  return {
+    ...state,
+    todoList: state.todoList.map((todo) =>
+      todo.id === action.payload.updatedTodo.id
+        ? action.payload.updatedTodo
+        : todo
+    ),
+  };
+
+
 
 
     case TODO_ACTIONS.COMPLETE_TODO_ERROR: {
@@ -199,6 +224,27 @@ export function todoReducer(state, action) {
             error: action.payload.error,
         };
         }
+
+
+
+    case TODO_ACTIONS.DELETE_TODO_START:
+    return {
+        ...state,
+    };
+
+    case TODO_ACTIONS.DELETE_TODO_SUCCESS:
+    return {
+        ...state,
+        todoList: state.todoList.filter(
+        (todo) => todo.id !== action.payload.id
+        ),
+    };
+
+    case TODO_ACTIONS.DELETE_TODO_ERROR:
+    return {
+        ...state,
+        error: action.payload.error,
+    };    
 
 
     case TODO_ACTIONS.SET_SORT:

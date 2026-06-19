@@ -54,6 +54,7 @@ import {
                                               dispatch({ type: TODO_ACTIONS.SET_DATA_VERSION });
                                              },[dispatch])
 
+  
 
 
 
@@ -164,15 +165,16 @@ useEffect(() => {
 
   
 
-  async function completeTodo(id) {
+  async function completeTodo(id, currentValue) {
   // 1. guardar original
   const originalTodo = todoList.find(
     (todo) => todo.id === id
   );
 
+
     dispatch({
     type: TODO_ACTIONS.COMPLETE_TODO_START,
-    payload: { id },
+     payload: { id },
   });
 
 
@@ -186,9 +188,11 @@ useEffect(() => {
         "X-CSRF-TOKEN": token,
       },
       body: JSON.stringify({
-        isCompleted: true,
+        isCompleted: !currentValue,
       }),
     });
+
+    const updatedTodo = await response.json();
 
     if (!response.ok) {
       throw new Error("error completing todo");
@@ -196,7 +200,7 @@ useEffect(() => {
 
     dispatch({
       type: TODO_ACTIONS.COMPLETE_TODO_SUCCESS,
-      payload: { id },
+      payload: { updatedTodo },
     });
     
   } catch (err) {
@@ -266,6 +270,46 @@ useEffect(() => {
   }
 }
 
+
+async function deleteTodo(id) {
+  // opcional: guardar original por si quieres rollback
+  const originalTodo = todoList.find((todo) => todo.id === id);
+
+  dispatch({
+    type: TODO_ACTIONS.DELETE_TODO_START,
+    payload: { id },
+  });
+
+  try {
+    const response = await fetch(`/api/tasks/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "X-CSRF-TOKEN": token,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("error deleting todo");
+    }
+
+    dispatch({
+      type: TODO_ACTIONS.DELETE_TODO_SUCCESS,
+      payload: { id },
+    });
+
+    invalidateCache();
+
+  } catch (err) {
+    dispatch({
+      type: TODO_ACTIONS.DELETE_TODO_ERROR,
+      payload: {
+        originalTodo,
+        error: err.message,
+      },
+    });
+  }
+}
 
 
 
@@ -349,6 +393,7 @@ useEffect(() => {
       todoList={todoList} 
       onCompleteTodo={completeTodo}
       onUpdateTodo={updateTodo}
+      onDeleteTodo={deleteTodo} 
       dataVersion = {dataVersion }
       statusFilter={statusFilter}  /* Add this prop */
     />
